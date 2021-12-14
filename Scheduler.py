@@ -1,24 +1,25 @@
 import bisect
 from Event import *
 from Source import *
-from util import *
+from Util import *
 from Sink import *
+from WaitingQueue import *
+from Employee import *
 
 
-class SimuleringsMotor:
+
+class Scheduler:
 
     currentTime = 0
     eventList = []
     
     def __init__(self):
-    
         self.simulationStart=Event(self,0,EventType.SimulationStart,None)
         self.eventList.append(self.simulationStart)
         self.tempsSimulacio=100
         self.arrivaltimes=2
         self.cycletimes=10
         self.customerAtesos=0
-        self.veuretraza=0
 
     def __repr__(self):
         return "Simulerings Motor"
@@ -31,16 +32,16 @@ class SimuleringsMotor:
         #rellotge de simulacio a 0
         self.currentTime=0        
         #bucle de simulacio (condicio fi simulacio llista buida)
-        endSimulation = input("Stopsim with -1")
-        while endSimulation!=-1:
+        while  self.currentTime<50:
             #recuperem event simulacio
-            event=self.eventList.pop(0)
+            event:Event =self.eventList.pop(0)
             #actualitzem el rellotge de simulacio
             self.currentTime=event.tid
-            self.trace(event)
+            # self.trace(event)
             # deleguem l'accio a realitzar de l'esdeveniment a l'objecte que l'ha generat
             # tambe podriem delegar l'accio a un altre objecte
-            event.objecte.tractarEsdeveniment(event)
+            print(self.currentTime)
+            event.object.tractarEsdeveniment(event)
             #endSimulation = input("Stopsim with -1")
 
         
@@ -65,18 +66,17 @@ class SimuleringsMotor:
 
     def afegirEsdeveniment(self,event):
         #inserir esdeveniment de forma ordenada
-        self.eventList.push(event)
+        self.eventList.append(event)
         #bisect.insort(self.eventList, event)
 
 
     def tractarEsdeveniment(self,event):
         if (event.type==EventType.SimulationStart):
             self.source.simulationStart()
-            self.queue.simulationStart()
-            self.employee1.simulationStart()
-            self.employee2.simulationStart()
-            self.employee3.simulationStart()
-            self.sink.simulationStart()
+            # self.employee1.simulationStart()
+            # self.employee2.simulationStart()
+            # self.employee3.simulationStart()
+            # self.sink.simulationStart()
     
     def configurar(self):
         print('Insereix temps de generació de customer ')
@@ -87,25 +87,29 @@ class SimuleringsMotor:
     def crearModel(self):
         # creacio dels objectes que composen el meu model
         self.source = Source(self, self.arrivaltimes)
-        self.queue = WaitingQueue(self)
-        self.employee1 = Employee(self, "1")
-        self.employee2 = Employee(self, "2")
-        self.employee3 = Employee(self, "3")     
-        self.sink = Sink(self.veuretraza)
+        self.employee1 = Employee(self)
+        self.employee2 = Employee(self)
+        self.employee3 = Employee(self)  
+        self.queue = WaitingQueue(self, self.employee1, self.employee2, self.employee3)
+        self.sink = Sink()
+        self.employee1.initializeEntity(self.queue, self.sink)
+        self.employee2.initializeEntity(self.queue, self.sink)
+        self.employee3.initializeEntity(self.queue, self.sink)
 
 
     def recollirEstadistics(self):
-        print(Colors.HEADER,"ESTADÍSTICS",Colors.ENDC)
+        pass
+        # print(Colors.HEADER,"ESTADÍSTICS",Colors.ENDC)
 
-        self.gainn.summary()
-        self.gataO.summary()
-        self.gataE.summary()
-        self.gataN.summary()
-        self.gataS.summary()
-        self.polite.summary()
-        self.gaut.summary()
+        # self.gainn.summary()
+        # self.gataO.summary()
+        # self.gataE.summary()
+        # self.gataN.summary()
+        # self.gataS.summary()
+        # self.polite.summary()
+        # self.gaut.summary()
    
 
 if __name__ == "__main__":
-    scheduler = SimuleringsMotor()
+    scheduler = Scheduler()
     scheduler.run()

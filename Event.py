@@ -1,4 +1,3 @@
-from oppregninger import *
 
 class Event:
     def __init__(self,object,temps,tipus,entitat=None,fra=None):

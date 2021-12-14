@@ -16,7 +16,7 @@ class EventType(Enum):
     FinishService=5
     SimulationStart=6
     NewClient=7
-    AtendreCient=8
+    AtendreClient=8
 
 class Colors:
     HEADER = '\033[95m'
