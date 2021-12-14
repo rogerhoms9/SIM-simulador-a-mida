@@ -2,11 +2,10 @@ import math
 from client import * 
 from Event import *
 from Util import *
-from Scheduler import *
 
 class Source:
 
-    def __init__(self,scheduler: Scheduler,parameter):
+    def __init__(self,scheduler,parameter):
         # inicialitzar element de simulacio
         self.entitatsCreades=0
         self.state=State.SERVICE
