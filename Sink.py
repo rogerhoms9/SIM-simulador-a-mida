@@ -1,7 +1,6 @@
-from oppregninger import *
+
 import math
 from Event import *
-from Bil import *
 
 
 class Sink:

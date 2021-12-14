@@ -1,7 +1,7 @@
 import bisect
 from Event import *
 from Source import *
-
+from util import *
 from Sink import *
 
 
@@ -31,7 +31,8 @@ class SimuleringsMotor:
         #rellotge de simulacio a 0
         self.currentTime=0        
         #bucle de simulacio (condicio fi simulacio llista buida)
-        while self.currentTime<self.tempsSimulacio:
+        endSimulation = input("Stopsim with -1")
+        while endSimulation!=-1:
             #recuperem event simulacio
             event=self.eventList.pop(0)
             #actualitzem el rellotge de simulacio
@@ -39,7 +40,9 @@ class SimuleringsMotor:
             self.trace(event)
             # deleguem l'accio a realitzar de l'esdeveniment a l'objecte que l'ha generat
             # tambe podriem delegar l'accio a un altre objecte
-            event.objekt.tractarEsdeveniment(event)
+            event.objecte.tractarEsdeveniment(event)
+            #endSimulation = input("Stopsim with -1")
+
         
         #recollida d'estadistics
         self.recollirEstadistics()
@@ -62,19 +65,18 @@ class SimuleringsMotor:
 
     def afegirEsdeveniment(self,event):
         #inserir esdeveniment de forma ordenada
-        bisect.insort(self.eventList, event)
-        a=10
+        self.eventList.push(event)
+        #bisect.insort(self.eventList, event)
 
 
     def tractarEsdeveniment(self,event):
         if (event.type==EventType.SimulationStart):
-            self.gainn.simulationStart()
-            self.polite.simulationStart()
-            self.gataO.simulationStart()
-            self.gataE.simulationStart()
-            self.gataN.simulationStart()
-            self.gataS.simulationStart()
-            self.gaut.simulationStart()
+            self.source.simulationStart()
+            self.queue.simulationStart()
+            self.employee1.simulationStart()
+            self.employee2.simulationStart()
+            self.employee3.simulationStart()
+            self.sink.simulationStart()
     
     def configurar(self):
         print('Insereix temps de generació de customer ')
@@ -89,15 +91,8 @@ class SimuleringsMotor:
         self.employee1 = Employee(self, "1")
         self.employee2 = Employee(self, "2")
         self.employee3 = Employee(self, "3")     
-        self.gaut = Sink(self.veuretraza)
+        self.sink = Sink(self.veuretraza)
 
-        self.gainn.koble(self.gataO,self.gataE,self.gataS,self.gataN)
-        self.polite.koble(self.gataO,self.gataE,self.gataS,self.gataN)
-
-        self.gataO.koble(self.gaut)
-        self.gataE.koble(self.gaut)
-        self.gataN.koble(self.gaut)
-        self.gataS.koble(self.gaut)
 
     def recollirEstadistics(self):
         print(Colors.HEADER,"ESTADÍSTICS",Colors.ENDC)

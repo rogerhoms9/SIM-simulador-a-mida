@@ -1,7 +1,8 @@
 from oppregninger import *
 import math
+from client import * 
 from Event import *
-from Bil import * 
+from util import *
 
 class Source:
 
@@ -10,18 +11,18 @@ class Source:
         self.entitatsCreades=0
         self.state=State.SERVICE
         self.scheduler=scheduler
-        self.tempsEntreArrivades=parameter
+        self.tempsEntreArribades=parameter
 
 
     def __repr__(self):
         return "Source"
     
-    def koble(self,gataE,gataO,gataN,gataS):
-        self.gataE=gataE
-        self.gataO=gataO
-        self.gataN=gataN
-        self.gataS=gataS   
-        self.gater=[self.gataE,self.gataO,self.gataN,self.gataS]
+   # def koble(self,gataE,gataO,gataN,gataS):
+    #    self.gataE=gataE
+     #   self.gataO=gataO
+      #  self.gataN=gataN
+       # self.gataS=gataS   
+        #self.gater=[self.gataE,self.gataO,self.gataN,self.gataS]
 
     def tractarEsdeveniment(self, event):
         if (event.type==EventType.NextArrival):
@@ -37,14 +38,14 @@ class Source:
         # incrementem estadistics si s'escau
         self.entitatsCreades=self.entitatsCreades+1
         #creacio entitat arribada
-        entitat=Bil(event.tid)
-        self.scheduler.afegirEsdeveniment(Event(self.gater[entitat.carrer],event.tid,EventType.Tranfer, entitat))
+        entitat=Client(event.tid)
+        self.scheduler.afegirEsdeveniment(Event(self.queue,event.tid,EventType.NewClient, entitat))
 
     def properaArribada(self, temps):
         # cada quan generem una arribada (hauriem de tenir com a minim alguna component estocastica)
-        tempsEntreArribades = self.parameter
+        tempsEntreArribades = self.tempsEntreArribades
         # programacio arribada
-        self.scheduler.afegirEsdeveniment(Event(self,temps+tempsEntreArribades,EventType.NextArrival, None))
+        self.scheduler.afegirEsdeveniment(Event(self,temps+tempsEntreArribades,EventType.ScheduleArrival, None))
       
     def summary(self):
         print('Entitats arribades al sistema: ',self.entitatsCreades)
