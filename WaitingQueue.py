@@ -2,12 +2,15 @@ from types import new_class
 from Util import EventType
 from Event import *
 from Employee import *
+import matplotlib.pyplot as plt
 
 class WaitingQueue:
 
     def __init__(self, scheduler,employee1: Employee, employee2: Employee, employee3:Employee):
         self.scheduler=scheduler
         self.personesCua=0
+        self.totalOcupation=[]
+        self.times=[]
         self.queue=[]
         self.employee1=employee1
         self.employee2=employee2
@@ -18,11 +21,12 @@ class WaitingQueue:
     def tractarEsdeveniment(self,event: Event):
         if(event.type==EventType.NewClient):
             self.newClient(event)
-        elif(event.type==EventType.FinishService):
+        else:
             self.finishService(event)
 
     def newClient(self, event: Event):
         if event.type==EventType.NewClient:
+            print("inside queue")
             self.queue.append(event.entitat)
 
         if(self.employee1.available):
@@ -34,9 +38,29 @@ class WaitingQueue:
         else:
             if event.type==EventType.NewClient:
                 self.personesCua +=1
+        self.computeOcupation(event)
+    
+    def computeOcupation(self,event):
+        self.times.append(event.tid)
+        self.totalOcupation.append(len(self.queue))
 
     def finishService(self, event: Event):
+        if event.type==EventType.FinishService1:
+            self.employee1.available=True
+        elif event.type==EventType.FinishService2:
+            self.employee2.available=True
+        elif event.type==EventType.FinishService3:
+            self.employee3.available=True
         if len(self.queue) != 0:
+            print("QUEUE:")
+            print(self.queue)
             self.newClient(event)
+    
+    def showChart(self):
+        plt.plot(self.times, self.totalOcupation, color='red', marker='o')
+        plt.title('Queue occupation')
+        plt.xlabel('Time')
+        plt.ylabel('People')
+        plt.show()
     
 

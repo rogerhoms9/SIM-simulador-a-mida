@@ -13,10 +13,12 @@ class EventType(Enum):
     Tranfer=2
     Cycle=3
     FinshClient=4
-    FinishService=5
-    SimulationStart=6
-    NewClient=7
-    AtendreClient=8
+    FinishService1=5
+    FinishService2=6
+    FinishService3=7
+    SimulationStart=8
+    NewClient=9
+    AtendreClient=10
 
 class Colors:
     HEADER = '\033[95m'
