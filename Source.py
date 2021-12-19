@@ -1,5 +1,5 @@
 import math
-from client import * 
+from Client import * 
 from Event import *
 from Util import *
 
@@ -11,6 +11,7 @@ class Source:
         self.state=State.SERVICE
         self.scheduler=scheduler
         self.tempsEntreArribades=parameter
+        self.idClient=0
 
 
     def __repr__(self):
@@ -37,8 +38,9 @@ class Source:
         # incrementem estadistics si s'escau
         self.entitatsCreades=self.entitatsCreades+1
         #creacio entitat arribada
-        entitat=Client(event.tid)
-        print("Client "+ str(entitat)+" created.")
+        self.idClient+=1
+        entitat=Client(self.idClient, self.scheduler.currentTime )
+        print("Client "+ str(entitat.id)+" created.")
         self.scheduler.afegirEsdeveniment(Event(self.scheduler.queue,event.tid,EventType.NewClient, entitat))
 
     def properaArribada(self, temps):

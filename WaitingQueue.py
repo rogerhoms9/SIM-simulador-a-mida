@@ -15,6 +15,7 @@ class WaitingQueue:
         self.employee1=employee1
         self.employee2=employee2
         self.employee3=employee3
+        self.waitTime=[]
         
        
 
@@ -30,10 +31,13 @@ class WaitingQueue:
             self.queue.append(event.entitat)
 
         if(self.employee1.available):
+            self.waitTime.append( event.tid-self.queue[0].creationTime )
             self.scheduler.afegirEsdeveniment(Event(self.employee1,event.tid,EventType.AtendreClient, self.queue.pop(0)))
         elif(self.employee2.available):
+            self.waitTime.append( event.tid-self.queue[0].creationTime )
             self.scheduler.afegirEsdeveniment(Event(self.employee2,event.tid,EventType.AtendreClient, self.queue.pop(0)))
         elif(self.employee3.available):
+            self.waitTime.append( event.tid-self.queue[0].creationTime )
             self.scheduler.afegirEsdeveniment(Event(self.employee3,event.tid,EventType.AtendreClient, self.queue.pop(0)))
         else:
             if event.type==EventType.NewClient:
@@ -56,11 +60,5 @@ class WaitingQueue:
             print(self.queue)
             self.newClient(event)
     
-    def showChart(self):
-        plt.plot(self.times, self.totalOcupation, color='red', marker='o')
-        plt.title('Queue occupation')
-        plt.xlabel('Time')
-        plt.ylabel('People')
-        plt.show()
-    
+   
 

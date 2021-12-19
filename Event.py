@@ -7,7 +7,6 @@ class Event:
         self.object=object
         self.tid=temps
         self.entitat=entitat
-        self.fra=fra
 
     def __repr__(self):
         return str(self.tid)+' '+str(self.type)

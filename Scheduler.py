@@ -1,4 +1,3 @@
-import bisect
 from typing import List
 from Event import *
 from Source import *
@@ -6,7 +5,6 @@ from Util import *
 from Sink import *
 from WaitingQueue import *
 from Employee import *
-import operator
 
 
 
@@ -28,11 +26,10 @@ class Scheduler:
  
     def run(self):
         #configurar el model per consola, arxiu de text...
-        print('Insereix temps de generació de customer ')
         self.tempsSimulacio=(float)(input("Temps Simulacio: "))
         self.arrivaltimes=(float)(input("Temps entre arribades: "))
-        self.processingTime=(float)(input("Temps d'atenció a un client: "))
-
+        self.mediana=(float)(input("Introdueix la mediana del temps d'atenció d'un client: "))
+        self.variancia=(float)(input("Introdueix la variancia del temps d'atenció d'un client: "))
         self.crearModel()
         
         #rellotge de simulacio a 0
@@ -46,25 +43,9 @@ class Scheduler:
             # self.trace(event)
             # deleguem l'accio a realitzar de l'esdeveniment a l'objecte que l'ha generat
             # tambe podriem delegar l'accio a un altre objecte
-            print(event)
+            print(str(event))
             event.object.tractarEsdeveniment(event)
         self.recollirEstadistics()
-
-    # def trace(self,event):
-    #     if (self.veuretraza==0):
-    #          return
-    #     color=Colors.HEADER
-    #     if event.type==EventType.Access:
-    #         color=Colors.OKBLUE
-    #     if event.type==EventType.Cycle:
-    #         color=Colors.HEADER
-    #     if event.type==EventType.NextArrival:
-    #         color=Colors.OKGREEN
-    #     if event.type==EventType.StepIn:
-    #         color=Colors.OKCYAN
-    #     if event.type==EventType.Tranfer:
-    #         color=Colors.OKRARO
-    #     print(color,event.tid,event.type,' ',event.objekt,Colors.ENDC)
 
     def afegirEsdeveniment(self,event):
         #inserir esdeveniment de forma ordenada
@@ -80,9 +61,9 @@ class Scheduler:
     def crearModel(self):
         # creacio dels objectes que composen el meu model
         self.source = Source(self, self.arrivaltimes)
-        self.employee1 = Employee(self,1,self.processingTime)
-        self.employee2 = Employee(self,2,self.processingTime)
-        self.employee3 = Employee(self,3,self.processingTime)  
+        self.employee1 = Employee(self,1,self.mediana, self.variancia)
+        self.employee2 = Employee(self,2,self.mediana, self.variancia)
+        self.employee3 = Employee(self,3,self.mediana, self.variancia)  
         self.queue = WaitingQueue(self, self.employee1, self.employee2, self.employee3)
         self.sink = Sink()
         self.employee1.initializeEntity(self.queue, self.sink)
@@ -91,18 +72,47 @@ class Scheduler:
 
 
     def recollirEstadistics(self):
-        self.queue.showChart()
-        self.showPieChartEmployee1()
+        sum=0
+        for i in self.queue.waitTime:
+            sum+=i
+        print("AVERAGE TIME ON QUEUE:")
+        if len(self.queue.waitTime)!=0:
+            print(str(sum/len(self.queue.waitTime))+"seconds")
+        self.showQueueOcupation()
+        self.showPieChartEmployees()
     
-    def showPieChartEmployee1(self):
-        workingTime=self.employee1.getWWorkingTime()
-
+    def showPieChartEmployees(self):
         labels = 'Working', 'IDLE'
+
+        workingTime=self.employee1.getWorkingTime()
         sizes = [workingTime, self.tempsSimulacio-workingTime] 
         fig1, ax1 = plt.subplots()   
         ax1.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
-        ax1.axis('equal') 
+        ax1.axis('equal')
+        ax1.set_title('Employee 1 workload') 
+        
+        workingTime=self.employee2.getWorkingTime()
+        sizes = [workingTime, self.tempsSimulacio-workingTime] 
+        fig2, ax2 = plt.subplots()   
+        ax2.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+        ax2.axis('equal') 
+        ax2.set_title('Employee 2 workload')
+
+        workingTime=self.employee3.getWorkingTime()
+        sizes = [workingTime, self.tempsSimulacio-workingTime] 
+        fig3, ax3 = plt.subplots()   
+        ax3.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+        ax3.axis('equal') 
+        ax3.set_title('Employee 3 workload')
         plt.show()
+
+    def showQueueOcupation(self):
+        plt.plot(self.queue.times, self.queue.totalOcupation, color='red', marker='o')
+        plt.title('Queue occupation')
+        plt.xlabel('Time')
+        plt.ylabel('People')
+        plt.show()
+    
 
    
 
