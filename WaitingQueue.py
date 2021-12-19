@@ -2,12 +2,12 @@ from types import new_class
 from Util import EventType
 from Event import *
 from Employee import *
-import matplotlib.pyplot as plt
+
 
 class WaitingQueue:
 
     def __init__(self, scheduler,employee1: Employee, employee2: Employee, employee3:Employee):
-        self.scheduler=scheduler
+        self.scheduler = scheduler
         self.personesCua=0
         self.totalOcupation=[]
         self.times=[]
@@ -16,6 +16,7 @@ class WaitingQueue:
         self.employee2=employee2
         self.employee3=employee3
         self.waitTime=[]
+        self.maxSize=10
         
        
 
@@ -27,7 +28,6 @@ class WaitingQueue:
 
     def newClient(self, event: Event):
         if event.type==EventType.NewClient:
-            print("inside queue")
             self.queue.append(event.entitat)
 
         if(self.employee1.available):
@@ -56,8 +56,8 @@ class WaitingQueue:
         elif event.type==EventType.FinishService3:
             self.employee3.available=True
         if len(self.queue) != 0:
-            print("QUEUE:")
-            print(self.queue)
+            print()
+            print("QUEUE: "+ str(self.queue))
             self.newClient(event)
     
    

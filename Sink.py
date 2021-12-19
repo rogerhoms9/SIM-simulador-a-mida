@@ -19,7 +19,7 @@ class Sink:
     def processFinihService(self,event:Event):
         # Fer quelcom d'estadistics
         self.entitatsSortides+=1
-        print("Client "+ str(event)+" ended.")
+        print("Client "+ str(event.entitat)+" has been served.")
         #self.livAvg=(self.livAvg+event.entitat.livstid)/self.entitatsSortides
         # Memoritzar temps de vida
         self.summary()
@@ -30,7 +30,5 @@ class Sink:
         print('Entitats sortides del sistema: ',self.entitatsSortides)
         #print('Temps mig de vida: ',self.livAvg)
 
-    def __repr__(self):
-        return "Ga ut"
     
    

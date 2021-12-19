@@ -1,10 +1,11 @@
-from typing import List
+
 from Event import *
 from Source import *
 from Util import *
 from Sink import *
 from WaitingQueue import *
 from Employee import *
+import matplotlib.pyplot as plt
 
 
 
@@ -40,10 +41,9 @@ class Scheduler:
             event:Event =self.eventList.pop(0)
             #actualitzem el rellotge de simulacio
             self.currentTime=event.tid
-            # self.trace(event)
             # deleguem l'accio a realitzar de l'esdeveniment a l'objecte que l'ha generat
             # tambe podriem delegar l'accio a un altre objecte
-            print(str(event))
+            print(str(event.tid)+" segons. Tipo: "+ str(event.type))
             event.object.tractarEsdeveniment(event)
         self.recollirEstadistics()
 
@@ -75,31 +75,32 @@ class Scheduler:
         sum=0
         for i in self.queue.waitTime:
             sum+=i
-        print("AVERAGE TIME ON QUEUE:")
+        print("\n AVERAGE TIME ON QUEUE:")
+
         if len(self.queue.waitTime)!=0:
-            print(str(sum/len(self.queue.waitTime))+"seconds")
+            print(str(sum/len(self.queue.waitTime))+" seconds")
         self.showQueueOcupation()
         self.showPieChartEmployees()
     
     def showPieChartEmployees(self):
-        labels = 'Working', 'IDLE'
+        labels = 'Preparing meat', 'Preparing fish', 'IDLE'
 
-        workingTime=self.employee1.getWorkingTime()
-        sizes = [workingTime, self.tempsSimulacio-workingTime] 
-        fig1, ax1 = plt.subplots()   
+        workingTimes=self.employee1.getWorkingTimes()
+        sizes = [workingTimes[0],workingTimes[1], self.tempsSimulacio-workingTimes[0]-workingTimes[1]] 
+        fig1, ax1 = plt.subplots()  
         ax1.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
         ax1.axis('equal')
         ax1.set_title('Employee 1 workload') 
         
-        workingTime=self.employee2.getWorkingTime()
-        sizes = [workingTime, self.tempsSimulacio-workingTime] 
+        workingTimes=self.employee2.getWorkingTimes()
+        sizes = [workingTimes[0],workingTimes[1], self.tempsSimulacio-workingTimes[0]-workingTimes[1]] 
         fig2, ax2 = plt.subplots()   
         ax2.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
         ax2.axis('equal') 
         ax2.set_title('Employee 2 workload')
 
-        workingTime=self.employee3.getWorkingTime()
-        sizes = [workingTime, self.tempsSimulacio-workingTime] 
+        workingTimes=self.employee3.getWorkingTimes()
+        sizes = [workingTimes[0],workingTimes[1], self.tempsSimulacio-workingTimes[0]-workingTimes[1]] 
         fig3, ax3 = plt.subplots()   
         ax3.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
         ax3.axis('equal') 
@@ -107,7 +108,9 @@ class Scheduler:
         plt.show()
 
     def showQueueOcupation(self):
-        plt.plot(self.queue.times, self.queue.totalOcupation, color='red', marker='o')
+        plt.plot(self.queue.times, self.queue.totalOcupation, color='red', marker='.', label="Queue ocupation")
+        plt.axhline(y=self.queue.maxSize, color='black', linestyle='-',label="Queue capacity")
+        plt.legend()
         plt.title('Queue occupation')
         plt.xlabel('Time')
         plt.ylabel('People')
